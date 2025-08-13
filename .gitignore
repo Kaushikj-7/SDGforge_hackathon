@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+*.log
+.env
+temp/
+test_files/
+
+# API Keys (keep config.py local, use config_template.py)
+config.py
+
+# Empty files (keeping only working files)
+*.cpp
+*benchmark*.py
+working_*.py
+test_*.py
+simple_health_analyzer.py
+medical_apis.py
+python_article_benchmark.py
+python_benchmark.py
+article_benchmark.cpp
+simple_health_analyzer.cpp

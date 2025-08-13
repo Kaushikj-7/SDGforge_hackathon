@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Fact Verifier Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-claim {
+            background: #f5f5f5;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #007cba;
+            border-radius: 4px;
+        }
+        .harmful { border-left-color: #e74c3c; }
+        .caution { border-left-color: #f39c12; }
+        .safe { border-left-color: #27ae60; }
+        .instructions {
+            background: #e8f4fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🏥 Medical Fact Verifier Extension Test Page</h1>
+    
+    <div class="instructions">
+        <h2>📝 How to Test the Extension:</h2>
+        <ol>
+            <li><strong>Highlight any medical text below</strong></li>
+            <li><strong>Right-click</strong> on the highlighted text</li>
+            <li><strong>Select "Verify Medical Fact"</strong> from the context menu</li>
+            <li><strong>Watch for the color-coded banner</strong> to appear</li>
+            <li><strong>Click the extension icon</strong> to see the dashboard</li>
+        </ol>
+        <p><strong>Note:</strong> Make sure the backend server is running at <code>http://localhost:5000</code></p>
+    </div>
+
+    <h2>Test Claims (Try highlighting and right-clicking these):</h2>
+
+    <div class="test-claim harmful">
+        <h3>🔴 Should Show "Harmful":</h3>
+        <p>Drinking bleach can cure cancer and kill all viruses in your body.</p>
+        <p>Vaccines cause autism in children and should be avoided at all costs.</p>
+        <p>5G towers spread coronavirus and weaken your immune system.</p>
+    </div>
+
+    <div class="test-claim caution">
+        <h3>🟡 Should Show "Caution":</h3>
+        <p>Natural sugar is always healthy and better than artificial sweeteners.</p>
+        <p>Essential oils can cure most diseases if used properly.</p>
+        <p>Detox diets can cleanse all toxins from your body in just 7 days.</p>
+    </div>
+
+    <div class="test-claim safe">
+        <h3>🟢 Should Show "Safe":</h3>
+        <p>Regular exercise helps prevent heart disease and improves overall health.</p>
+        <p>Washing hands frequently reduces the risk of infections.</p>
+        <p>A balanced diet with fruits and vegetables supports good health.</p>
+    </div>
+
+    <h2>📊 Extension Features to Test:</h2>
+    <ul>
+        <li><strong>Context Menu:</strong> Right-click highlighted text</li>
+        <li><strong>Color-coded Banners:</strong> Red, Yellow, Green indicators</li>
+        <li><strong>Detail Panels:</strong> Click info button (ⓘ) for explanations</li>
+        <li><strong>Dashboard:</strong> Click extension icon for statistics</li>
+        <li><strong>Source Links:</strong> Clickable trusted sources</li>
+    </ul>
+
+    <h2>🔧 Troubleshooting:</h2>
+    <div class="instructions">
+        <h3>If the extension doesn't work:</h3>
+        <ol>
+            <li>Check Chrome Extensions page: <code>chrome://extensions/</code></li>
+            <li>Ensure "Medical Fact Verifier" is enabled</li>
+            <li>Check if backend server is running: <a href="http://localhost:5000" target="_blank">http://localhost:5000</a></li>
+            <li>Open Developer Tools (F12) and check Console for errors</li>
+            <li>Try refreshing this page after loading the extension</li>
+        </ol>
+    </div>
+
+    <footer style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #ddd; color: #666;">
+        <p>🤖 Powered by Medical Fact Verifier Extension</p>
+        <p>For support, check the browser console or extension README</p>
+    </footer>
+</body>
+</html>

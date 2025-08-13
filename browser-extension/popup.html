@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Fact Verifier</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="popup-container">
+        <div class="header">
+            <h1>🏥 Medical Fact Verifier</h1>
+        </div>
+        
+        <div class="status-section">
+            <p><strong>Status:</strong> <span id="backend-status">Checking...</span></p>
+        </div>
+        
+        <div class="instructions">
+            <h3>How to use:</h3>
+            <ol>
+                <li>Select medical text on any webpage</li>
+                <li>Click the "Verify" button that appears</li>
+                <li>View the verification results</li>
+            </ol>
+        </div>
+        
+        <div class="stats-section">
+            <h3>Session Stats:</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number" id="total-checks">0</span>
+                    <span class="stat-label">Total Checks</span>
+                </div>
+                <div class="stat-item safe">
+                    <span class="stat-number" id="safe-checks">0</span>
+                    <span class="stat-label">Safe</span>
+                </div>
+                <div class="stat-item caution">
+                    <span class="stat-number" id="caution-checks">0</span>
+                    <span class="stat-label">Caution</span>
+                </div>
+                <div class="stat-item harmful">
+                    <span class="stat-number" id="harmful-checks">0</span>
+                    <span class="stat-label">Harmful</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <button id="clear-stats" class="btn">Clear Stats</button>
+        </div>
+    </div>
+    
+    <script src="popup.js"></script>
+</body>
+</html>

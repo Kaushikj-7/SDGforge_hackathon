@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Fact Verifier - Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            background: #f5f5f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #007cba;
+        }
+        .harmful-content {
+            border-left-color: #e74c3c;
+            background: #fdf2f2;
+        }
+        .caution-content {
+            border-left-color: #f39c12;
+            background: #fffbf0;
+        }
+        .safe-content {
+            border-left-color: #27ae60;
+            background: #f0fff4;
+        }
+        h2 {
+            color: #333;
+            margin-top: 40px;
+        }
+        .instruction {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🏥 Medical Fact Verifier Extension Test Page</h1>
+    
+    <div class="instruction">
+        <strong>Instructions:</strong>
+        <ol>
+            <li>Make sure your Medical Fact Verifier extension is loaded in Chrome</li>
+            <li>Make sure the backend is running at http://localhost:5000</li>
+            <li>Select any medical text below and right-click</li>
+            <li>Choose "Verify Medical Fact" from the context menu</li>
+            <li>Check the banner that appears showing corrected fact, explanation, and source URLs</li>
+        </ol>
+    </div>
+
+    <h2>❌ Test Harmful Misinformation</h2>
+    <div class="test-section harmful-content">
+        <p>Drinking bleach cures cancer and all diseases. This miracle cure has been hidden from the public by big pharma.</p>
+        <p>Vaccines cause autism and contain dangerous chemicals that will harm your children.</p>
+        <p>Essential oils can cure any disease including cancer, just apply them topically or drink them.</p>
+    </div>
+
+    <h2>⚠️ Test Content Requiring Caution</h2>
+    <div class="test-section caution-content">
+        <p>Natural remedies and herbal medicine can replace all conventional treatments without side effects.</p>
+        <p>This supplement will boost your immune system and prevent all diseases naturally.</p>
+        <p>Alternative treatments are always safer than conventional medicine and FDA-approved drugs.</p>
+    </div>
+
+    <h2>✅ Test Safe Medical Information</h2>
+    <div class="test-section safe-content">
+        <p>Regular exercise and a balanced diet can help maintain good health and reduce disease risk.</p>
+        <p>Vaccines are safe and effective at preventing serious diseases when administered by healthcare professionals.</p>
+        <p>Getting adequate sleep and staying hydrated are important for overall health and well-being.</p>
+        <p>Proper nutrition including fruits and vegetables provides essential vitamins and minerals for the body.</p>
+    </div>
+
+    <h2>📊 Expected Extension Behavior</h2>
+    <div class="test-section">
+        <h3>For Harmful Content (Red Banner):</h3>
+        <ul>
+            <li><strong>Status:</strong> "Harmful Misinformation"</li>
+            <li><strong>Corrected Fact:</strong> Warning about dangers</li>
+            <li><strong>Explanation:</strong> Why the claim is harmful</li>
+            <li><strong>Sources:</strong> WHO, CDC, PubMed links</li>
+        </ul>
+
+        <h3>For Caution Content (Yellow Banner):</h3>
+        <ul>
+            <li><strong>Status:</strong> "Use Caution"</li>
+            <li><strong>Corrected Fact:</strong> Requires verification</li>
+            <li><strong>Explanation:</strong> Why professional consultation is needed</li>
+            <li><strong>Sources:</strong> NCCIH, FDA, medical databases</li>
+        </ul>
+
+        <h3>For Safe Content (Green Banner):</h3>
+        <ul>
+            <li><strong>Status:</strong> "Safe Information"</li>
+            <li><strong>Corrected Fact:</strong> Confirms accuracy</li>
+            <li><strong>Explanation:</strong> Alignment with medical guidelines</li>
+            <li><strong>Sources:</strong> Health authority websites</li>
+        </ul>
+    </div>
+
+    <h2>🔧 Troubleshooting</h2>
+    <div class="test-section">
+        <p><strong>If the extension doesn't work:</strong></p>
+        <ol>
+            <li>Check that the extension is enabled in chrome://extensions/</li>
+            <li>Verify the backend is running: <a href="http://localhost:5000/api/health" target="_blank">http://localhost:5000/api/health</a></li>
+            <li>Check browser console for errors (F12)</li>
+            <li>Try refreshing this page and testing again</li>
+        </ol>
+    </div>
+
+    <script>
+        // Test backend connectivity
+        fetch('http://localhost:5000/api/health')
+            .then(response => response.json())
+            .then(data => {
+                console.log('✅ Backend connected:', data);
+                document.body.insertAdjacentHTML('afterbegin', 
+                    '<div style="background: #d4edda; padding: 10px; border-radius: 5px; margin-bottom: 20px; color: #155724;">' +
+                    '✅ Backend is running and connected!</div>'
+                );
+            })
+            .catch(error => {
+                console.error('❌ Backend connection failed:', error);
+                document.body.insertAdjacentHTML('afterbegin', 
+                    '<div style="background: #f8d7da; padding: 10px; border-radius: 5px; margin-bottom: 20px; color: #721c24;">' +
+                    '❌ Backend is not running. Please start the backend server first.</div>'
+                );
+            });
+    </script>
+</body>
+</html>
