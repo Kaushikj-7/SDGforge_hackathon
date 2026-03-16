@@ -1,7 +1,11 @@
-#!/usr/bin/env python3
-"""
+﻿import sys
+import os
+
+with open('simple_backend.py', 'w', encoding='utf-8') as f:
+    f.write('''#!/usr/bin/env python3
+\"\"\"
 Simplified Flask Backend for Medical Fact Verifier Extension
-"""
+\"\"\"
 
 import sys
 import os
@@ -54,7 +58,7 @@ else:
 
 @app.route('/api/verify', methods=['POST', 'OPTIONS'])
 def verify_medical_fact():
-    """API endpoint for medical fact verification with full Phase 1-6 pipeline"""
+    \"\"\"API endpoint for medical fact verification with full Phase 1-6 pipeline\"\"\"
     if request.method == 'OPTIONS':
         return '', 200
 
@@ -75,31 +79,31 @@ def verify_medical_fact():
 
         # Initialize proof_chain
         proof_chain = [
-            {"node": "User Claim Received", "type": "input", "content": claim_text[:100]}
+            {\"node\": \"User Claim Received\", \"type\": \"input\", \"content\": claim_text[:100]}
         ]
 
         # PHASE 1: Classification
         if classify_input_type:
             classified = classify_input_type(claim_text)
             proof_chain.append({
-                "node": f"Classified: {classified.get('type', 'text')}",
-                "type": "classification"
+                \"node\": f\"Classified: {classified.get('type', 'text')}\",
+                \"type\": \"classification\"
             })
 
         # PHASE 2: Content Retrieval & Processing
         if retrieve_content:
             input_data = {
-                "type": "plain_text",
-                "content": claim_text,
-                "context": context,
-                "source_url": source_url,
-                "extraction_mode": extraction_mode
+                \"type\": \"plain_text\",
+                \"content\": claim_text,
+                \"context\": context,
+                \"source_url\": source_url,
+                \"extraction_mode\": extraction_mode
             }
             content_result = retrieve_content(input_data)
             processed_claim = content_result.get('content', claim_text)
             proof_chain.append({
-                "node": "Content Processed",
-                "type": "content"
+                \"node\": \"Content Processed\",
+                \"type\": \"content\"
             })
         else:
             processed_claim = claim_text
@@ -116,9 +120,9 @@ def verify_medical_fact():
             )
             if analysis_result:
                 proof_chain.append({
-                    "node": f"Analysis: {analysis_result.get('verdict', 'pending')}",
-                    "type": "analysis",
-                    "confidence": analysis_result.get('confidence', 0.0)
+                    \"node\": f\"Analysis: {analysis_result.get('verdict', 'pending')}\",
+                    \"type\": \"analysis\",
+                    \"confidence\": analysis_result.get('confidence', 0.0)
                 })
                 medical_entities = analysis_result.get('medical_entities', [])
 
@@ -144,8 +148,8 @@ def verify_medical_fact():
 
             if sources:
                 proof_chain.append({
-                    "node": f"Found {len(sources)} Trusted Source(s)",
-                    "type": "sources"
+                    \"node\": f\"Found {len(sources)} Trusted Source(s)\",
+                    \"type\": \"sources\"
                 })
 
         # PHASE 6: Fact Correction WITH PROOF_CHAIN
@@ -159,7 +163,7 @@ def verify_medical_fact():
             corrected_fact = fact_check.get('corrected_fact', 'Unable to verify')
             proof_chain = fact_check.get('proof_chain', proof_chain)
         else:
-            corrected_fact = "Phase 6 unavailable - check server logs"
+            corrected_fact = \"Phase 6 unavailable - check server logs\"
 
         # Map verdict to API status
         verdict = analysis_result.get('verdict', 'uncertain')
@@ -182,8 +186,8 @@ def verify_medical_fact():
 
         # Add final node to proof chain
         proof_chain.append({
-            "node": "Verification Complete",
-            "type": "final"
+            \"node\": \"Verification Complete\",
+            \"type\": \"final\"
         })
 
         # Build response
@@ -198,11 +202,11 @@ def verify_medical_fact():
             'action_needed': analysis_result.get('action_needed', 'Consult healthcare professionals')
         }
 
-        print(f"✅ Response: {status} (confidence: {analysis_result.get('confidence', 0):.1%})")
+        print(f\"✅ Response: {status} (confidence: {analysis_result.get('confidence', 0):.1%})\")
         return jsonify(response)
 
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f\"❌ Error: {e}\")
         traceback.print_exc()
 
         return jsonify({
@@ -211,12 +215,12 @@ def verify_medical_fact():
             'corrected_fact': 'Unable to verify claim.',
             'explanation': 'An error occurred during verification. Check server logs.',
             'source_links': [],
-            'proof_chain': [{"node": "Error Occurred", "type": "error", "message": str(e)}]
+            'proof_chain': [{\"node\": \"Error Occurred\", \"type\": \"error\", \"message\": str(e)}]
         }), 500
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
-    """Health check endpoint"""
+    \"\"\"Health check endpoint\"\"\"
     return jsonify({
         'status': 'healthy',
         'service': 'Medical Fact Verifier API'
@@ -224,19 +228,20 @@ def health_check():
 
 @app.route('/', methods=['GET'])
 def home():
-    """Root endpoint"""
+    \"\"\"Root endpoint\"\"\"
     return jsonify({
         'service': 'Medical Fact Verifier API',
         'status': 'running'
     })
 
 if __name__ == '__main__':
-    print("🩺 Starting Simple Medical Fact Verifier Backend...")
-    print("📡 Server: http://localhost:5000")
-    print("🔗 API: http://localhost:5000/api/verify")
+    print(\"🩺 Starting Simple Medical Fact Verifier Backend...\")
+    print(\"📡 Server: http://localhost:5000\")
+    print(\"🔗 API: http://localhost:5000/api/verify\")
 
     try:
         app.run(host='127.0.0.1', port=5000, debug=False)
     except Exception as e:
-        print(f"❌ Failed to start server: {e}")
-        print("💡 Try running with: python simple_backend.py")
+        print(f\"❌ Failed to start server: {e}\")
+        print(\"💡 Try running with: python simple_backend.py\")
+''')

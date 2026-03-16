@@ -18,7 +18,7 @@ except ImportError:
     GROQ_ENDPOINT = os.environ.get(
         "GROQ_ENDPOINT", "https://api.groq.com/openai/v1/chat/completions"
     )
-    GROQ_MODEL = os.environ.get("GROQ_MODEL", "llama3-70b-8192")
+    GROQ_MODEL = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
     GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 
 
@@ -38,7 +38,7 @@ def _call_groq_agent(role_prompt, claim, context=""):
     ]
 
     payload = {
-        "model": "llama3-70b-8192",
+        "model": "llama-3.3-70b-versatile",
         "messages": messages,
         "temperature": 0.2,
         "max_tokens": 500,

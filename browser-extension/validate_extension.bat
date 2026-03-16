@@ -55,7 +55,7 @@ if exist "content.css" (
 
 echo.
 echo 🌐 Checking backend connectivity...
-curl -s -X GET "http://localhost:5000/api/health" -H "Content-Type: application/json" > nul 2>&1
+curl -s -X GET "http://localhost:5001/api/health" -H "Content-Type: application/json" > nul 2>&1
 if %errorlevel% equ 0 (
     echo ✅ Backend is running and accessible
 ) else (

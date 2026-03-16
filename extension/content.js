@@ -206,7 +206,7 @@ function showMicroButton(x, y, onVerify) {
 
   const btn = document.createElement("button");
   btn.className = "hfc-btn";
-  btn.textContent = "✓ Verify claim";
+  btn.textContent = "Check  Verify claim";
   btn.style.left = `${Math.min(x, window.innerWidth - 160)}px`;
   btn.style.top  = `${y + 8}px`;
 
