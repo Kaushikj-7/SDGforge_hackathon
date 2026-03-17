@@ -1,3 +1,4 @@
+console.log("TruthLens/Health Fact Checker: Content Script Loaded v2.3.2");
 /**
  * content.js — Health Fact Checker
  *
@@ -13,13 +14,16 @@
  *   - Bundle size: this file should stay under 15kb
  */
 
-const BACKEND_URL = "http://127.0.0.1:8000";  // change to prod URL
+const BACKEND_URL = "http://127.0.0.1:8001";  // change to prod URL
 const MIN_SELECTION_LENGTH = 15;
 const HEALTH_TRIGGER_WORDS = [
   "cure", "treat", "prevent", "cancer", "diabetes", "vaccine", "drug",
   "vitamin", "supplement", "dose", "medication", "symptom", "disease",
   "infection", "antibody", "immune", "clinical", "study", "research",
-  "mg", "proven", "natural", "toxic", "harmful", "safe", "effective"
+  "mg", "proven", "natural", "toxic", "harmful", "safe", "effective",
+  "medicine", "prescription", "therapy", "wellness", "diet", "nutrition",
+  "hospital", "physician", "doctor", "nurse", "surgery", "viral", "contagious",
+  "outbreak", "pandemic", "herbal", "remedy", "side effect", "covid", "mask"
 ];
 
 // ─── Shadow DOM container ──────────────────────────────────────────────────
@@ -68,8 +72,10 @@ function ensureShadowHost() {
       font-family: -apple-system, sans-serif;
       font-size: 13px;
       color: #202124;
-      min-width: 280px;
-      max-width: 360px;
+      min-width: 380px;
+      max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
       pointer-events: all;
       z-index: 2;
     }
@@ -257,36 +263,59 @@ function updateStatus(card, message, confidence) {
 }
 
 function renderVerdict(card, verdict) {
-  const riskColor = {
-    CRITICAL: "#c5221f",
-    HIGH:     "#b45309",
-    MEDIUM:   "#92400e",
-    LOW:      "#137333"
-  };
+    const riskColor = {
+      CRITICAL: "#c5221f",
+      HIGH:     "#b45309",
+      MEDIUM:   "#92400e",
+      LOW:      "#137333"
+    };
 
-  const sourcePills = (verdict.sources || [])
-    .slice(0, 3)
-    .map(s => `<a class="hfc-source-pill" href="${s.url}" target="_blank">${s.name}</a>`)
-    .join("");
+    const sourcePills = (verdict.sources || [])
+      .slice(0, 3)
+      .map(s => `<a class="hfc-source-pill" href="${s.url}" target="_blank">${s.name}</a>`)
+      .join("");
 
-  card.innerHTML = `
-    <button class="hfc-close">×</button>
-    <div>
-      <span class="hfc-verdict-badge hfc-${verdict.risk_level}">
-        ${verdict.risk_level} — ${verdict.verdict}
-      </span>
-    </div>
-    <div class="hfc-confidence-bar">
-      <div class="hfc-confidence-fill" style="width:${Math.round((verdict.confidence || 0) * 100)}%"></div>
-    </div>
-    <div style="font-size:11px;color:#888;margin-bottom:6px;">
-      Confidence: ${Math.round((verdict.confidence || 0) * 100)}%
-    </div>
-    <div class="hfc-correction">${verdict.correction || ""}</div>
-    <div class="hfc-sources">${sourcePills}</div>
-  `;
-  card.querySelector(".hfc-close").addEventListener("click", removeCurrentPopup);
-}
+    let agentInsights = "";
+    // Removed 5-AGENT SWARM FINDINGS section as per user request
+
+    let translationHTML = "";
+    if (verdict.regional_translations) {
+        if (verdict.regional_translations.Hindi) {
+            translationHTML +=
+            `<div style="margin-top:12px; padding-top:12px; border-top:1px solid #e0e0e0;">
+                <div style="font-size:10px; color:#1a73e8; font-weight:bold; margin-bottom:4px;">🇮🇳 EASY HINDI</div>
+                <div class="hfc-correction" style="font-size:12px;">${verdict.regional_translations.Hindi}</div>
+            </div>`;
+        }
+        if (verdict.regional_translations.Kannada) {
+            translationHTML +=
+            `<div style="margin-top:12px; padding-top:12px; border-top:1px solid #e0e0e0;">
+                <div style="font-size:10px; color:#1a73e8; font-weight:bold; margin-bottom:4px;">🇮🇳 EASY KANNADA</div>
+                <div class="hfc-correction" style="font-size:12px;">${verdict.regional_translations.Kannada}</div>
+            </div>`;
+        }
+    }
+
+    card.innerHTML = `
+      <button class="hfc-close">×</button>
+      <div>
+        <span class="hfc-verdict-badge hfc-${verdict.risk_level}">
+          ${verdict.risk_level} — ${verdict.verdict}
+        </span>
+      </div>
+      <div class="hfc-confidence-bar">
+        <div class="hfc-confidence-fill" style="width:${Math.round((verdict.confidence || 0) * 100)}%"></div>
+      </div>
+      <div style="font-size:11px;color:#888;margin-bottom:6px;">
+        Confidence: ${Math.round((verdict.confidence || 0) * 100)}%
+      </div>
+      <div class="hfc-correction">${verdict.correction || ""}</div>
+      ${agentInsights}
+      ${translationHTML}
+      <div class="hfc-sources">${sourcePills}</div>
+    `;
+    card.querySelector(".hfc-close").addEventListener("click", removeCurrentPopup);
+  }
 
 // ─── SSE stream handler ────────────────────────────────────────────────────
 
@@ -381,8 +410,8 @@ function handleSelectionEnd(e) {
   }
 
   const selectedText = selection.toString().trim();
-  if (selectedText.length < MIN_SELECTION_LENGTH) return;
-  if (!isHealthRelated(selectedText)) return;
+  // MIN_SELECTION_LENGTH removed
+  // isHealthRelated removed
 
   // Get position for popup anchor
   const rect = selection.getRangeAt(0).getBoundingClientRect();
@@ -409,3 +438,4 @@ function handleSelectionEnd(e) {
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") removeCurrentPopup();
 });
+

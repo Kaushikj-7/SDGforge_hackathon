@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+import os
+
+html = """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -191,16 +193,69 @@
         <strong id="stat-confidence">--%</strong>
     </div>
 
-    
-    <div class="section-title" style="margin-top: 16px;">Analyze Screenshot</div>
-    <div id="drop-zone" style="border: 2px dashed #1a73e8; padding: 20px; text-align: center; border-radius: 8px; margin-bottom: 16px; cursor: pointer; color: #5f6368; font-size: 12px; background: rgba(26,115,232,0.05); transition: background 0.3s;">
-        Click or Drag Image Here<br><small>(WhatsApp / TikTok meme)</small>
-        <input type="file" id="image-upload" accept="image/*" style="display:none">
-    </div>
-    <div id="image-result" style="font-size: 12px; padding: 10px; background: #e6f4ea; display: none; margin-bottom: 16px; border-radius: 6px; color: #137333;"></div>
-
     <button id="refresh-btn" class="btn-refresh">Refresh Network Stats</button>
 
     <script src="popup.js"></script>
 </body>
-</html>
+</html>"""
+
+js = """const BACKEND_URL = "http://127.0.0.1:8000";
+
+document.addEventListener("DOMContentLoaded", () => {
+    checkServerStatus();
+    loadStats();
+
+    document.getElementById("refresh-btn").addEventListener("click", () => {
+        checkServerStatus();
+        loadStats();
+    });
+});
+
+async function checkServerStatus() {
+    const badge = document.getElementById("status-badge");
+    const text = document.getElementById("status-text");
+    badge.className = "status-badge"; // reset
+    
+    try {
+        // Hit the dashboard api just to check health mapping
+        const response = await fetch(`${BACKEND_URL}/api/dashboard`);
+        if (response.ok) {
+            badge.classList.add("online");
+            text.textContent = "Connected (5-Agent Swarm Live)";
+        } else {
+            badge.classList.add("offline");
+            text.textContent = "Backend Offline";
+        }
+    } catch (e) {
+        badge.classList.add("offline");
+        text.textContent = "Backend Offline";
+    }
+}
+
+async function loadStats() {
+    try {
+        // Fetch real aggregated TruthLens metrics from global network API
+        const response = await fetch(`${BACKEND_URL}/api/dashboard`);
+        if (!response.ok) throw new Error("Network error");
+        
+        const data = await response.json();
+        
+        document.getElementById("stat-total").textContent = data.claims_processed || 0;
+        document.getElementById("stat-flagged").textContent = data.high_risk_claims || 0;
+        
+        const confPercent = Math.round((data.avg_confidence || 0) * 100);
+        document.getElementById("stat-confidence").textContent = `${confPercent}%`;
+    } catch (e) {
+        // Fallback or just leave as dashes
+        document.getElementById("stat-total").textContent = "N/A";
+        document.getElementById("stat-flagged").textContent = "N/A";
+        document.getElementById("stat-confidence").textContent = "N/A";
+    }
+}
+"""
+
+with open("browser-extension/popup.html", "w", encoding="utf-8") as f:
+    f.write(html)
+with open("browser-extension/popup.js", "w", encoding="utf-8") as f:
+    f.write(js)
+print("Updated popup!")
