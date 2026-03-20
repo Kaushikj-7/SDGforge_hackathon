@@ -1,0 +1,261 @@
+import os
+
+html = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TruthLens</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            width: 320px;
+            margin: 0;
+            padding: 16px;
+            color: #202124;
+            background: #ffffff;
+        }
+        @media (prefers-color-scheme: dark) {
+            body { background: #18181b; color: #e8eaed; }
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+        @media (prefers-color-scheme: dark) {
+            .header { border-bottom: 1px solid #3c4043; }
+        }
+        .logo {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+            color: #1a73e8;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        @media (prefers-color-scheme: dark) {
+            .logo { color: #8ab4f8; }
+        }
+        .status-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: #f1f3f4;
+            color: #5f6368;
+        }
+        .status-badge.online { background: #e6f4ea; color: #137333; }
+        .status-badge.offline { background: #fce8e6; color: #c5221f; }
+        .status-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: currentColor;
+        }
+
+        .instructions {
+            background: #f8f9fa;
+            border-left: 3px solid #1a73e8;
+            padding: 10px 12px;
+            border-radius: 0 4px 4px 0;
+            font-size: 12px;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+        @media (prefers-color-scheme: dark) {
+            .instructions { background: #202124; border-left-color: #8ab4f8; }
+        }
+
+        .sdg-badge {
+            display: inline-block;
+            background: #fce8e6;
+            color: #c5221f;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+        .sdg-badge.sdg10 { background: #f3e8fd; color: #8430ce; margin-left: 4px;}
+
+        .section-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #5f6368;
+            margin-bottom: 10px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .stat-card {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+        @media (prefers-color-scheme: dark) {
+            .stat-card { background: #202124; border-color: #3c4043; }
+        }
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #202124;
+            margin-bottom: 2px;
+        }
+        @media (prefers-color-scheme: dark) {
+            .stat-value { color: #e8eaed; }
+        }
+        .stat-label {
+            font-size: 11px;
+            color: #5f6368;
+        }
+
+        .recent-trend {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+        @media (prefers-color-scheme: dark) {
+            .recent-trend { background: #202124; }
+        }
+
+        .btn-refresh {
+            width: 100%;
+            padding: 10px;
+            background: #1a73e8;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-refresh:hover { background: #1557b0; }
+        .btn-refresh:disabled { background: #ccc; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="logo">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            TruthLens
+        </h1>
+        <div id="status-badge" class="status-badge offline">
+            <div class="status-dot"></div>
+            <span id="status-text">Disconnected</span>
+        </div>
+    </div>
+
+    <div>
+        <span class="sdg-badge">SDG 3 Health Equity</span>
+        <span class="sdg-badge sdg10">SDG 10 Reduced Inequalities</span>
+    </div>
+
+    <div class="instructions">
+        Select any health claim on a webpage and click the <strong>TruthLens</strong> button to verify it via our 5-agent AI swarm.
+    </div>
+
+    <div class="section-title">Network Impact (Live)</div>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div id="stat-total" class="stat-value">--</div>
+            <div class="stat-label">Claims Verified</div>
+        </div>
+        <div class="stat-card">
+            <div id="stat-flagged" class="stat-value" style="color: #d93025;">--</div>
+            <div class="stat-label">High-Risk Flagged</div>
+        </div>
+    </div>
+
+    <div class="recent-trend">
+        <span>Average Confidence:</span>
+        <strong id="stat-confidence">--%</strong>
+    </div>
+
+    <button id="refresh-btn" class="btn-refresh">Refresh Network Stats</button>
+
+    <script src="popup.js"></script>
+</body>
+</html>"""
+
+js = """const BACKEND_URL = "http://127.0.0.1:8000";
+
+document.addEventListener("DOMContentLoaded", () => {
+    checkServerStatus();
+    loadStats();
+
+    document.getElementById("refresh-btn").addEventListener("click", () => {
+        checkServerStatus();
+        loadStats();
+    });
+});
+
+async function checkServerStatus() {
+    const badge = document.getElementById("status-badge");
+    const text = document.getElementById("status-text");
+    badge.className = "status-badge"; // reset
+    
+    try {
+        // Hit the dashboard api just to check health mapping
+        const response = await fetch(`${BACKEND_URL}/api/dashboard`);
+        if (response.ok) {
+            badge.classList.add("online");
+            text.textContent = "Connected (5-Agent Swarm Live)";
+        } else {
+            badge.classList.add("offline");
+            text.textContent = "Backend Offline";
+        }
+    } catch (e) {
+        badge.classList.add("offline");
+        text.textContent = "Backend Offline";
+    }
+}
+
+async function loadStats() {
+    try {
+        // Fetch real aggregated TruthLens metrics from global network API
+        const response = await fetch(`${BACKEND_URL}/api/dashboard`);
+        if (!response.ok) throw new Error("Network error");
+        
+        const data = await response.json();
+        
+        document.getElementById("stat-total").textContent = data.claims_processed || 0;
+        document.getElementById("stat-flagged").textContent = data.high_risk_claims || 0;
+        
+        const confPercent = Math.round((data.avg_confidence || 0) * 100);
+        document.getElementById("stat-confidence").textContent = `${confPercent}%`;
+    } catch (e) {
+        // Fallback or just leave as dashes
+        document.getElementById("stat-total").textContent = "N/A";
+        document.getElementById("stat-flagged").textContent = "N/A";
+        document.getElementById("stat-confidence").textContent = "N/A";
+    }
+}
+"""
+
+with open("browser-extension/popup.html", "w", encoding="utf-8") as f:
+    f.write(html)
+with open("browser-extension/popup.js", "w", encoding="utf-8") as f:
+    f.write(js)
+print("Updated popup!")
